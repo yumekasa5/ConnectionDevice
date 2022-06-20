@@ -1,5 +1,4 @@
 from SensorDevice.i2c_device_base import I2CDeviceInfoBase
-import i2c_device_base
 import smbus
 import adafruit_amg88xx
 import numpy as np
@@ -15,14 +14,14 @@ class AMG8833_8x8(I2CDeviceInfoBase):
         self.thermister_i2c_address = 0xE                                           #サーミスタのアドレス
     
     #8x8のグリッド温度データ取得
-    def get_grid_temp():
+    def get_grid_temp_degC(self):
         grid_8x8 = self.sensor.pixels
         return grid_8x8 
 
     #サーミスタ温度の取得(生データx0.0625)
-    def get_thermister_temp():
+    def get_thermister_temp_degC(self):
         coificient = 0.0625
-        rawtemp = self.i2c.read_word_data(i2c_address, self.thermister_i2c_address)
+        rawtemp = self.i2c.read_word_data(self.i2c_address, self.thermister_i2c_address)
         temp = rawtemp * coificient
         return temp
     
