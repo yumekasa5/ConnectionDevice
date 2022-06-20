@@ -24,20 +24,19 @@ class ComSensorControlDevice(ComDeviceInfoBase):
         super().__init__(devname, ipaddress, port, comstatus)
         self.sensorlist = sensorlist
 
-
-#サーバとの通信
-def sensor_socket_server(data, address):
-    while True:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.connect(address)
-                s.send(str(data).encode())
-            except Exception as e:
-                print("sensor socket server : ", e, "\n")
-            else:
-                break
-            finally:
-                s.close()
+    #サーバとの通信
+        def communicate_with_server(data, server_address):
+            while True:
+             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.connect(server_address)
+                    s.send(str(data).encode())
+                except Exception as e:
+                    print("Sensor control device communicates with server device : ", e, "\n")
+                else:
+                    break
+                finally:
+                    s.close()
 
     
 
