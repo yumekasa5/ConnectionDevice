@@ -22,7 +22,7 @@ class AMG8833_8x8(I2CDeviceInfoBase):
     #サーミスタ温度の取得(生データx0.0625)
     def get_thermister_temp():
         coificient = 0.0625
-        rawtemp = i2c.read_word_data(i2c_address, self.thermister_i2c_address)
+        rawtemp = self.i2c.read_word_data(i2c_address, self.thermister_i2c_address)
         temp = rawtemp * coificient
         return temp
     
