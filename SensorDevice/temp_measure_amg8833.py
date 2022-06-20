@@ -12,10 +12,17 @@ class AMG8833_8x8(I2CDeviceInfoBase):
         super().__init__(hex_i2c_address = 0x68)
         self.i2c = smbus.SMBus(1)                                                   #ラズパイのi2cバスの番号
         self.sensor = adafruit_amg88xx.AMG88XX(self.i2c_bus, self.i2c_address)      #初期化
+        self.thermister_i2c_address = 0xE                                           #サーミスタのアドレス
     
     #8x8のグリッド温度データ取得
-    def get_grid_tempdata():
+    def get_grid_temp():
         grid_8x8 = self.sensor.pixels
         return grid_8x8 
 
+    #サーミスタ温度の取得(生データx0.0625)
+    def get_thermister_temp():
+        coificient = 0.0625
+        rawtemp = i2c.read_word_data(i2c_address, self.thermister_i2c_address)
+        temp = rawtemp * coificient
+        return temp
     
