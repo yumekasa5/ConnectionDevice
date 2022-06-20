@@ -16,5 +16,6 @@ class AMG8833_8x8(I2CDeviceInfoBase):
     #8x8のグリッド温度データ取得
     def get_grid_tempdata():
         grid_8x8 = self.sensor.pixels
+        return grid_8x8 
 
     
