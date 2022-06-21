@@ -25,9 +25,9 @@ class ComSensorControlDevice(ComDeviceInfoBase):
         self.sensorlist = sensorlist
 
     #サーバとの通信
-        def communicate_with_server(data, server_address):
-            while True:
-             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    def communicate_with_server(self, data, server_address):
+        while True:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 try:
                     s.connect(server_address)
                     s.send(str(data).encode())
@@ -37,6 +37,18 @@ class ComSensorControlDevice(ComDeviceInfoBase):
                     break
                 finally:
                     s.close()
+
+#Android端末クラス
+class ComAndroidDevice(ComDeviceInfoBase):
+
+    #コンストラクタ
+    def __init__(self, devname, ipaddress, port, comstatus, version):
+        super().__init__(devname, ipaddress, port, comstatus)
+        self.os_version = version
+
+    #サーバとの通信
+    def communicate_with_server(self, data, server_address):
+        pass
 
     
 
