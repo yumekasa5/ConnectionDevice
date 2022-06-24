@@ -1,4 +1,4 @@
-from SensorDevice.i2c_device_base import I2CDeviceInfoBase
+from i2c_device_base import I2CDeviceInfoBase
 import smbus
 import adafruit_amg88xx
 import numpy as np

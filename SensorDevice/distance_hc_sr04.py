@@ -1,11 +1,12 @@
-from curses import echo
-from turtle import distance
+from i2c_device_base import I2CDeviceInfoBase
 import time
 import RPi.GPIO
 
-class HC_SR04_Ultrasound:
+#超音波センサ(HC-SR04)クラス
+class HC_SR04_Ultrasound(I2CDeviceInfoBase):
     
-    def __init__(self):
+    def __init__(self, hex_i2c_address):
+        super().__init__(hex_i2c_address)
         self.trigger = 27
         self.echo = 22
         self.timer1_s = 0.3
