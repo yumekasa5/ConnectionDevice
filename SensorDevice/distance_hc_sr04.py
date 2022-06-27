@@ -1,5 +1,18 @@
 import time
 import RPi.GPIO
+import logging
+
+#ロガーの生成
+logger = logging.getLogger('hcsr04_log')
+
+#出力レベルの設定
+logger.setLevel(logging.DEBUG)
+
+#ハンドラの設定
+handler = logging.FileHandler('logfile.log')
+
+#フォーマッタの生成
+fmt = logging.Formatter('%(asctime)s%(message)s')
 
 #超音波センサ(HC-SR04)クラス
 class HC_SR04_Ultrasound(object):
@@ -19,6 +32,8 @@ class HC_SR04_Ultrasound(object):
 
     def get_distance_mm(self):
         """Get distance from HC-SR04 Ultrasound Sensor"""
+
+        logger.debug('Get distance from hc-sr04')
         distance = 0
         try:
             GPIO.setup(self.trigger_pin, GPIO.OUT)
@@ -37,5 +52,7 @@ class HC_SR04_Ultrasound(object):
             distance = echo_pulse_width / self.val
 
         except Exception as e:
+               logger.debug('[DEBUG]Out of Sensing Range')
                distance = 100.0
+        
         return distance
