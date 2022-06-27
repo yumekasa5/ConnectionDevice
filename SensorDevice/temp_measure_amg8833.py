@@ -22,8 +22,8 @@ fmt = logging.Formatter('%(asctime)s%(message)s')
 class AMG8833_8x8(I2CDeviceInfoBase):
 
     #コンストラクタ
-    def __init__(self, address = 0x68):
-        super().__init__()
+    def __init__(self):
+        super().__init__(address = 0x68)
         logger.debug('[Initialize]AMG8833 Settings...')
         self.i2c = smbus.SMBus(1)                                                   #ラズパイのi2cバスの番号
         self.sensor = adafruit_amg88xx.AMG88XX(self.i2c_bus, self.i2c_address)      #初期化

@@ -1,16 +1,16 @@
-from i2c_device_base import I2CDeviceInfoBase
 import time
 import RPi.GPIO
 
 #超音波センサ(HC-SR04)クラス
-class HC_SR04_Ultrasound(I2CDeviceInfoBase):
+class HC_SR04_Ultrasound(object):
     
-    def __init__(self, hex_i2c_address):
-        super().__init__(hex_i2c_address)
-        self.trigger = 27
-        self.echo = 22
-        self.timer1_s = 0.3
-        self.timer2_s = 0.00001
+    object_number = 0
+
+    def __init__(self, trriger = 27, echo = 22, timer1 = 0.3, timer2 = 0.00001):
+        self.trigger_pin = trriger
+        self.echo_pin = echo
+        self.timer1_s = timer1
+        self.timer2_s = timer2
         self.convert_mm_to_cm = 1000000
         self.val = 58
         GPIO.setwarnings(False)
