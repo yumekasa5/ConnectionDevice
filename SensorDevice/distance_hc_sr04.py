@@ -17,20 +17,20 @@ class HC_SR04_Ultrasound(object):
         GPIO.setmode(GPIO.BCM)
 
     def get_distance_mm(self):
-        
+        """Get distance from HC-SR04 Ultrasound Sensor"""
         distance = 0
         try:
-            GPIO.setup(self.trigger, GPIO.OUT)
-            GPIO.setup(self.echo, GPIO.IN)
-            GPIO.output(self.trigger, GPIO.LOW)
+            GPIO.setup(self.trigger_pin, GPIO.OUT)
+            GPIO.setup(self.echo_pin, GPIO.IN)
+            GPIO.output(self.trigger_pin, GPIO.LOW)
             time.sleep(self.timer1_s)
-            GPIO.output(self.trigger, GPIO.HIGH)
+            GPIO.output(self.trigger_pin, GPIO.HIGH)
             time.sleep(self.timer2_s)
-            GPIO.output(self.trigger, GPIO.LOW)
+            GPIO.output(self.trigger_pin, GPIO.LOW)
 
-            while GPIO.input(self.echo) == 0:
+            while GPIO.input(self.echo_pin) == 0:
                 echo_on = time.time()
-            while GPIO.input(self.echo) == 1:
+            while GPIO.input(self.echo_pin) == 1:
                 echo_off = time.time()
             echo_pulse_width = (echo_off - echo_on) * self.convert_mm_to_cm
             distance = echo_pulse_width / self.val
