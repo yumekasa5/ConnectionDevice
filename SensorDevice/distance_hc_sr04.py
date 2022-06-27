@@ -3,7 +3,8 @@ import RPi.GPIO
 
 #超音波センサ(HC-SR04)クラス
 class HC_SR04_Ultrasound(object):
-    
+    """HC-SR04 Ultrasound"""
+
     object_number = 0
 
     def __init__(self, trriger = 27, echo = 22, timer1 = 0.3, timer2 = 0.00001):
