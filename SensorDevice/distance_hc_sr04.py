@@ -9,10 +9,11 @@ logger = logging.getLogger('hcsr04_log')
 logger.setLevel(logging.DEBUG)
 
 #ハンドラの設定
-handler = logging.FileHandler('logfile.log')
+handler = logging.FileHandler('./logs/logfile.log')
 
 #フォーマッタの生成
-fmt = logging.Formatter('%(asctime)s%(message)s')
+fmt = logging.Formatter('%(asctime)s %(levelname)8s %(message)s')
+handler.setFormatter(fmt)
 
 #超音波センサ(HC-SR04)クラス
 class HC_SR04_Ultrasound(object):
