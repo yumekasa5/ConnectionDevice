@@ -1,4 +1,3 @@
-from termios import ECHOE
 import RPi.GPIO as GPIO
 from time import sleep
  
