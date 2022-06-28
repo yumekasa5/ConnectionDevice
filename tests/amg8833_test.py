@@ -1,4 +1,4 @@
-from SensorDevice.temp_measure_amg8833 import AMG8833_8x8
+from sensorlibs.temp_measure_amg8833 import AMG8833_8x8
 
 #8x8のグリッド温度データをコンソールに表示
 mydev = AMG8833_8x8()
