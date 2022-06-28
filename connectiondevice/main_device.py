@@ -24,6 +24,7 @@ logger.addHandler(handler)
 debug_msg = 'debug message'
 error_msg = 'error_message'
 
+#executerの生成
 executer = ThreadPoolExecutor(max_workers=4)
 executer2 = ThreadPoolExecutor(max_workers=1)
 
@@ -39,3 +40,7 @@ def main():
     #センサ・ライトのインスタンス生成
     gridtemp = AMG8833_8x8()
     tof = VL53L0X()
+    light = SimpleLedLight()
+
+    #Mydeviceインスタンスの生成
+    mydev = mydevice.MyDevice('YUMEKASA5', rasp, android, gridtemp, tof, light)
