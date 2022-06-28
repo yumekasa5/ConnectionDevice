@@ -50,11 +50,15 @@ class ComAndroidDevice(ComDeviceInfoBase):
     def communicate_with_server(self, data, server_address):
         pass
 
-    
+#サーバ機器クラス
+class ComServerDevice(ComDeviceInfoBase):
+    """Server Device"""
+
+    def __init__(self, devname, ipaddress, port, comstatus):
+        super().__init__(devname, ipaddress, port, comstatus)
 
 
-executer = ThreadPoolExecutor(max_workers=4)
-executer2 = ThreadPoolExecutor(max_workers=1)
+
 
 
 #インスタンス生成例
