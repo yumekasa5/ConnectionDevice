@@ -3,6 +3,7 @@ from connectiondevice.libs.VL53L0X import VL53L0X
 import mydevice
 from .libs.com_device import *
 from .libs.temp_amg8833 import *
+from .libs.led_light import *
 
 #ロガーの生成
 logger = logging.getLogger('amg8833_log')
@@ -38,4 +39,3 @@ def main():
     #センサ・ライトのインスタンス生成
     gridtemp = AMG8833_8x8()
     tof = VL53L0X()
-    
