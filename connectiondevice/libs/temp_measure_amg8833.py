@@ -13,10 +13,14 @@ logger = logging.getLogger('amg8833_log')
 logger.setLevel(logging.DEBUG)
 
 #ハンドラの設定
-handler = logging.FileHandler('logfile.log')
+handler = logging.FileHandler('./logs/logfile.log')
 
 #フォーマッタの生成
 fmt = logging.Formatter('%(asctime)s%(message)s')
+handler.setFormatter(fmt)
+
+#ハンドラをloggerに追加
+logger.addHandler(handler)
 
 #AMG8833(温度センサ)
 class AMG8833_8x8(I2CDeviceInfoBase):
