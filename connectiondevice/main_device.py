@@ -1,46 +1,33 @@
 import logging
-from connectiondevice.libs.VL53L0X import VL53L0X
-import mydevice
-from .libs.com_device import *
-from .libs.temp_amg8833 import *
-from .libs.led_light import *
+from .mydevice import *
 
-#ロガーの生成
-logger = logging.getLogger('amg8833_log')
-
-#出力レベルの設定
+#ロガーの設定
+logger = logging.getLogger('mydevicelog')
 logger.setLevel(logging.DEBUG)
-
-#ハンドラの設定
 handler = logging.FileHandler('./logs/logfile.log')
-
-#フォーマッタの生成
 fmt = logging.Formatter('%(asctime)s%(message)s')
 handler.setFormatter(fmt)
-
-#ハンドラをloggerに追加
 logger.addHandler(handler)
-
-debug_msg = 'debug message'
-error_msg = 'error_message'
 
 #executerの生成
 executer = ThreadPoolExecutor(max_workers=4)
 executer2 = ThreadPoolExecutor(max_workers=1)
 
 def main():
-    logger.debug(debug_msg)
-    logger.debug('[START] MyDevice System Start')
+    logger.debug('[START] MyDevice System')
 
     #各通信デバイスのインスタンス生成
-    rasp = ComSensorControlDevice()
-    android = ComAndroidDevice()
-    server = ComServerDevice()
+    # rasp = ComSensorControlDevice()
+    # android = ComAndroidDevice()
+    # server = ComServerDevice()
 
     #センサ・ライトのインスタンス生成
-    gridtemp = AMG8833_8x8()
-    tof = VL53L0X()
-    light = SimpleLedLight()
+    # gridtemp = AMG8833_8x8()
+    # tof = VL53L0X()
+    # light = SimpleLedLight()
 
-    #Mydeviceインスタンスの生成
-    mydev = mydevice.MyDevice('YUMEKASA5', rasp, android, gridtemp, tof, light)
+    mydev = MyDevice()
+    mydev.get_test_grid_data()
+
+    logger.debug('[END] MyDevice System')
+
