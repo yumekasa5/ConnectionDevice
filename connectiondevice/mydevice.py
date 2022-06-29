@@ -7,6 +7,8 @@ import board
 import logging
 import RPi.GPIO as GPIO
 import adafruit_amg88xx
+from .libs.led_light import *
+from .libs.distance_hc_sr04 import *
 # from concurrent.futures import ThreadPoolExecutor
 # from .libs.VL53L0X import VL53L0X
 # from .libs.temp_amg8833 import AMG8833_8x8
@@ -61,6 +63,8 @@ class MyDevice(object):
                  self.server_ip = IP_SERVER
 
                  self.temp = adafruit_amg88xx.AMG88xx(i2c_bus, addr = I2C_ADDR_AMG8833)
+                 self.dis = HC_SR04_Ultrasound()
+                 self.light = SimpleLedLight()
 
     #8x8のグリッド温度データ取得
     def get_grid_degC(self):
@@ -87,6 +91,20 @@ class MyDevice(object):
                         print('\n')
         except KeyboardInterrupt:
             logger.debug('[STOP]temp data')
+
+    #照明をつける
+    def light_on(self):
+        logger.debug('[ON]Light')
+        self.light.start_lit()
+
+    #照明を消す
+    def light_off(self):
+        logger.debug('[OFF]Light')
+        self.light.end_lit()
+
+    #距離を取得
+    def get_distance_cm(self):
+        pass
       
 
     
