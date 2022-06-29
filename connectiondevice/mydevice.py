@@ -47,7 +47,7 @@ handler.setFormatter(fmt)
 logger.addHandler(handler)
 
 
-#mydeviceクラス
+#MyDeviceクラス
 class MyDevice(object):
     """MyDevice"""
 
