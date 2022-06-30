@@ -26,3 +26,7 @@ MIN_DISTANCE_CM = 10
 #Range(body temparature[℃])
 ALART_BODY_TEMP_DEGC = 37.5
 MIN_BODY_TEMP_DEGC = 35.0
+
+#Correct temparature coeficient
+SLOPE = 0.0671
+INTERCEPT = 7.82

@@ -1,5 +1,5 @@
 import time
-import RPi.GPIO
+import RPi.GPIO as GPIO
 import logging
 
 #ロガーの生成
@@ -16,7 +16,7 @@ fmt = logging.Formatter('%(asctime)s %(levelname)8s %(message)s')
 handler.setFormatter(fmt)
 
 #超音波センサ(HC-SR04)クラス
-class HC_SR04_Ultrasound(object):
+class HCSR04_Ultrasound(object):
     """HC-SR04 Ultrasound"""
 
     object_number = 0
@@ -31,7 +31,7 @@ class HC_SR04_Ultrasound(object):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
 
-    def get_distance_mm(self):
+    def get_distance_cm(self):
         """Get distance from HC-SR04 Ultrasound Sensor"""
 
         logger.debug('Get distance from hc-sr04')

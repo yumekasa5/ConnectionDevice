@@ -1,3 +1,6 @@
+from ast import While
+from concurrent.futures import ThreadPoolExecutor
+from http import client
 import os
 import sys
 import socket
@@ -7,25 +10,17 @@ import board
 import logging
 import RPi.GPIO as GPIO
 import adafruit_amg88xx
-from .libs.led_light import *
-from .libs.distance_hc_sr04 import *
+from libs.led_light import *
+from libs.distance_hcsr04 import *
 # from concurrent.futures import ThreadPoolExecutor
 # from .libs.VL53L0X import VL53L0X
 # from .libs.temp_amg8833 import AMG8833_8x8
 import param
+from libs.correct_temp import *
 
 #i2cの設定
 i2c_bus = busio.I2C(board.SCL, board.SDA)
 i2c = smbus.SMBus(1)
-
-#ロガーの設定
-logger = logging.getLogger('mydevicelog')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler('./logs/logfile.log')
-fmt = logging.Formatter('%(asctime)s%(message)s')
-handler.setFormatter(fmt)
-logger.addHandler(handler)
-
 
 #MyDeviceクラス
 class MyDevice(object):
@@ -33,16 +28,29 @@ class MyDevice(object):
 
     def __init__(self):
                  """Initialize MyDevice"""
-                 logger.debug('[INIT]MyDevice System')
+
+                 logger.debug('[START]Initialize MyDevice System')
 
                  self.version = param.MYDEVICE_VERSION
                  self.rasp_ip = param.IP_RASP
                  self.android_ip = param.IP_ANDROID
                  self.server_ip = param.IP_SERVER
-
+                 self.port_screen_change1 = param.PORT_SCREEN_CHANGE1
+                 self.port_screen_change2 = param.PORT_SCREEN_CHANGE2
+                 self.port_led = param.PORT_LED
+                 self.port_sensor = param.PORT_SENSOR
+                 self.port_server = param.PORT_SERVER
+                 self.max_dis_cm = param.MAX_DISTANCE_CM
+                 self.min_dis_cm = param.MIN_DISTANCE_CM
+                 self.max_temp_degC = param.ALART_BODY_TEMP_DEGC
+                 self.min_temp_degC = param.MIN_BODY_TEMP_DEGC
+                 self.correct_slope = param.SLOPE
+                 self.correct_intercept = param.INTERCEPT
                  self.temp = adafruit_amg88xx.AMG88xx(i2c_bus, addr = param.I2C_ADDR_AMG8833)
-                 self.dis = HC_SR04_Ultrasound()
+                 self.dis = HCSR04_Ultrasound()
                  self.light = SimpleLedLight()
+
+                 logger.debug('[END]Initialize MyDevice System')
 
     #8x8のグリッド温度データ取得
     def get_grid_degC(self):
@@ -82,7 +90,81 @@ class MyDevice(object):
 
     #距離を取得
     def get_distance_cm(self):
-        pass
+        distance_cm = self.dis.get_distance_cm()
+        return distance_cm
+
+    #体温測定ループ(RaspberryPi -> Android)
+    def sensor_socket_android_loop(self):
+        """Measure body temp and send results to android."""
+
+        logger.debug('[START]Sensor socket android loop')
+        send_data_executor = ThreadPoolExecutor(max_workers=1)
+        while True:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    logger.debug('[START]Connect to android')
+                    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    s.bind(self.rasp_ip, self.port_sensor)
+                    s.listen(2)
+                    
+                    #android端末との接続
+                    logger.debug('[START]Wating for connection from android')
+                    clientsock, client_address = s.accept()
+                    logger.debug('[END]Wating for connection from android')
+                    
+                    #体温測定
+                    logger.debug('[START]Measure body temp')
+                    raw_grid_degC = self.get_grid_degC()
+                    distance_cm = self.get_distance_cm()
+                    logger.info('[DATA]distance:', distance_cm, '[cm]')
+
+                    #距離によるオフセットの算出
+                    if self.min_dis_cm <= distance_cm <=  self.max_dis_cm:
+                        temp_offset_degC = calc_offset_by_distance(distance_cm, self.correct_slope, self.correct_intercept)
+                    else:
+                        temp_offset_degC = calc_offset_by_distance(25, self.correct_slope, self.correct_intercept)
+                    logger.info('[DATA]Offset:', temp_offset_degC, '[℃]')
+
+                    #取得値補正
+                    body_temp_degC = estimate_body_temp_degC(distance_cm, raw_grid_degC, temp_offset_degC)
+                    send_data_executor.submit(self.send_data_to_server_loop, body_temp_degC)
+                    logger.info('[DATA]Body temp:', body_temp_degC, '[℃]')
+                    logger.debug('[END]Measure body temp')
+
+                except Exception as e:
+                    logger.error('[E112]rasp -> android:', e)
+                finally:
+                    clientsock.close()
+                    s.close()
+                    logger.debug('[END]Connect to android')
+        
+        logger.debug('[END]Sensor socket android loop')
+
+
+    
+    #体温データ送信ループ(RaspberryPi -> Server)
+    def send_data_to_server_loop(self, grid_degC):
+        """Send body temp data to server."""
+
+        logger.debug('[START]Send data to server loop')
+        while True:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    logger.debug('[START]Connect to server')
+                    s.connect(self.server_ip, self.port_server)
+                    s.send(str(grid_degC).encode())
+                    logger.debug('[SUCCESS]Send body temp data')
+
+                except Exception as e:
+                    logger.error('[E112]rasp -> server:', e)
+
+                else:
+                    break
+                finally:
+                    s.close()
+                    logger.debug('[END]Connect to server')
+        logger.debug('[END]Send data to server loop')
+
       
 
     
