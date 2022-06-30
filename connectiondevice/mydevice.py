@@ -2,6 +2,7 @@ from ast import While
 from concurrent.futures import ThreadPoolExecutor
 from http import client
 import os
+from pickle import TRUE
 import sys
 import socket
 import smbus
@@ -22,6 +23,14 @@ from libs.correct_temp import *
 i2c_bus = busio.I2C(board.SCL, board.SDA)
 i2c = smbus.SMBus(1)
 
+#ロガーの設定
+logger = logging.getLogger('mydevicelog')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler('./logs/logfile.log')
+fmt = logging.Formatter('%(asctime)s%(message)s')
+handler.setFormatter(fmt)
+logger.addHandler(handler)
+
 #MyDeviceクラス
 class MyDevice(object):
     """MyDevice"""
@@ -32,6 +41,7 @@ class MyDevice(object):
                  logger.debug('[START]Initialize MyDevice System')
 
                  self.version = param.MYDEVICE_VERSION
+                 self.mode = param.SYSTEM_MODE
                  self.rasp_ip = param.IP_RASP
                  self.android_ip = param.IP_ANDROID
                  self.server_ip = param.IP_SERVER
@@ -93,6 +103,62 @@ class MyDevice(object):
         distance_cm = self.dis.get_distance_cm()
         return distance_cm
 
+    #
+    def socket_lit(self):
+        pass
+    
+    #画面遷移(待機 <-> 認証)ループ
+    def screen_change_loop(self):
+        """Change Android GUI """
+        try:
+            is_recog = False
+            logger.debug('[START]Screen change loop')
+            
+            while True:
+                if not is_recog:
+                    try:
+                        distance_cm = self.get_distance_cm()
+                        logger.info('[DATA]distance:', distance_cm, '[cm]')
+                    except Exception as e:
+                        logger.error('[999]Get distance failed')
+
+                    #距離の評価
+                    if distance_cm <= self.max_dis_cm:
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            try:
+                                s.connect((self.android_ip, self.port_screen_change1))
+                                s.send(b'startFRR')
+                                is_recog = True
+                                logger.debug('[MODE]Face recognition')
+
+                            except Exception as e:
+                                if str(e) != '[Error 111] Connection refused':
+                                    logger.error('[111]Connection refused')
+                            finally:
+                                s.close()
+                else:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                        try:
+                            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                            s.bind((self.rasp_ip, self.port_screen_change2))
+                            s.listen(2)
+                            clientsock, clienct_address = s.accept()
+                            is_recog = False
+                            logger.debug('[MODE]Wating')
+
+                        except Exception as e:
+                            if str(e) != '[Error 111] Connection refused':
+                                logger.error('[111]Connection refused')
+                        finally:
+                            clientsock.close()
+                            s.close()
+        except Exception as e:
+            if str(e) != '[Error 111] Connection refused':
+                logger.error('[111]Connection refused')
+        
+        logger.debug('[END]Screen change loop')
+
+
     #体温測定ループ(RaspberryPi -> Android)
     def sensor_socket_android_loop(self):
         """Measure body temp and send results to android."""
@@ -139,8 +205,6 @@ class MyDevice(object):
                     logger.debug('[END]Connect to android')
         
         logger.debug('[END]Sensor socket android loop')
-
-
     
     #体温データ送信ループ(RaspberryPi -> Server)
     def send_data_to_server_loop(self, grid_degC):

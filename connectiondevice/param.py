@@ -1,6 +1,9 @@
 #Version
 MYDEVICE_VERSION = '10.00'
 
+#Mode
+SYSTEM_MODE = False
+
 #I2C address
 I2C_ADDR_AMG8833 = 0x68
 I2C_ADDR_VL53L0X = 0x29
