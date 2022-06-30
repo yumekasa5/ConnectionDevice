@@ -1,19 +1,5 @@
 import time
 import RPi.GPIO as GPIO
-import logging
-
-#ロガーの生成
-logger = logging.getLogger('hcsr04_log')
-
-#出力レベルの設定
-logger.setLevel(logging.DEBUG)
-
-#ハンドラの設定
-handler = logging.FileHandler('./logs/logfile.log')
-
-#フォーマッタの生成
-fmt = logging.Formatter('%(asctime)s %(levelname)8s %(message)s')
-handler.setFormatter(fmt)
 
 #超音波センサ(HC-SR04)クラス
 class HCSR04_Ultrasound(object):
