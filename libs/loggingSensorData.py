@@ -14,3 +14,11 @@ test_df = pd.DataFrame(test_array,
 # print(test_df)
 output_path = '../result/output.csv'
 test_df.to_csv(output_path, index = False)
+
+class SensorDataLog:
+    """センサからの出力データ"""
+    
+    def __init__(self, distance_cm, facetemp_degC) -> None:
+        self.dis = distance_cm
+        self.ft = facetemp_degC
+        self.df = pd.DataFrame()
