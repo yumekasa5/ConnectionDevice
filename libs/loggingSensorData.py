@@ -1,12 +1,8 @@
 """センサからのデータを保存するクラスや関数"""
+import os
 from datetime import datetime, date
 import numpy as np
 import pandas as pd
-
-
-# print(test_df)
-output_path = '../result/output.csv'
-test_df.to_csv(output_path, index = False)
 
 class SensorDataLog:
     """センサからの出力データのロギング"""
