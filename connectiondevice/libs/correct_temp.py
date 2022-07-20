@@ -59,9 +59,9 @@ def get_facegrids_degC(facegrid_array: List[float]) -> float:
 
 def estimate_body_temp_degC(raw_grids: List[float], temp_offset: float) -> float:
     """体温推定"""
-    grids = gaussian_filter(raw_grids)
-    facegrids = get_facegrids_degC(grids)
-    ret = facegrids + temp_offset
+    grids = gaussian_filter(raw_grids)          #平滑化
+    facegrids = get_facegrids_degC(grids)       #顔グリッド抽出
+    ret = facegrids + temp_offset               #オフセット加算
     return ret
 
 def estimate_env_temp_degC(raw_grids: List[List[float]], pos_exclude: List[List[int]]) -> float:

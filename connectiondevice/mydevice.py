@@ -204,19 +204,23 @@ class MyDevice(object):
                     
                     #体温測定
                     logger.debug('[START]Measure body temp')
-                    raw_grid_degC = self.get_grid_degC()
-                    distance_cm = self.get_distance_cm()
+                    raw_grid_degC = self.get_grid_degC()                                                    #グリッド温度取得
+                    envtemp_degC = estimate_env_temp_degC(raw_grid_degC, param.NO_USED_GRIDS_POS)           #環境温度の推定
+                    distance_cm = self.get_distance_cm()                                                    #距離の取得
+                    logger.info('[DATA]environment:', envtemp_degC, '[degC]')                                                    
                     logger.info('[DATA]distance:', distance_cm, '[cm]')
 
-                    #距離によるオフセットの算出
+                    #各種オフセットの算出
                     if self.min_dis_cm <= distance_cm <=  self.max_dis_cm:
-                        temp_offset_degC = calc_offset(distance_cm, self.correct_slope, self.correct_intercept)
+                        offset_dis = calc_offset(distance_cm, self.correct_slope, self.correct_intercept)   #距離によるオフセット算出
                     else:
-                        temp_offset_degC = calc_offset(25, self.correct_slope, self.correct_intercept)
-                    logger.info('[DATA]Offset:', temp_offset_degC, '[℃]')
-
+                        offset_dis = calc_offset(25, self.correct_slope, self.correct_intercept)
+                    offset_env = calc_offset(envtemp_degC, param.ENV_SLOPE, param.ENV_INTERCEPT)            #環境温度によるオフセット算出
+                    offset_degC = offset_dis + offset_env
+                    logger.info('[DATA]Offset:', offset_degC, '[℃]')
+                    
                     #取得値補正
-                    body_temp_degC = estimate_body_temp_degC(distance_cm, raw_grid_degC, temp_offset_degC)
+                    body_temp_degC = estimate_body_temp_degC(distance_cm, raw_grid_degC, offset_degC)       #体温推定
                     send_data_executor.submit(self.send_data_to_server_loop, body_temp_degC)
                     logger.info('[DATA]Body temp:', body_temp_degC, '[℃]')
                     logger.debug('[END]Measure body temp')
