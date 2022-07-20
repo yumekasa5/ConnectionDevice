@@ -1,3 +1,4 @@
+"""超音波センサによる距離の測定"""
 import time
 import RPi.GPIO as GPIO
 

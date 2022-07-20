@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""複数センサを扱うクラス"""
 from ast import While
 from concurrent.futures import ThreadPoolExecutor
 from http import client
@@ -126,7 +127,7 @@ class MyDevice(object):
         distance_cm = self.dis.get_distance_cm()
         return distance_cm
 
-    #
+    #soket_lit
     def socket_lit(self):
         pass
     

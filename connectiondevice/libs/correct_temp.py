@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""温度データの補正"""
+"""温度データの補正を行う関数"""
 from curses import raw
 import numpy as np
 from typing import List
