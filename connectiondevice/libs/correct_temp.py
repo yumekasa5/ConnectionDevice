@@ -46,9 +46,9 @@ def gaussian_filter(src: np.ndarray) -> np.ndarray:
     
     return dst
 
-def calc_offset_by_distance(distance: float, slope: float, intercept: float) -> float:
-    """距離によるオフセットの算出"""
-    offset = slope * distance + intercept
+def calc_offset(x: float, slope: float, intercept: float) -> float:
+    """オフセットの算出"""
+    offset = slope * x + intercept
     return offset
 
 def get_facegrids_degC(facegrid_array: List[float]) -> float:

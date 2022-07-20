@@ -39,9 +39,8 @@ from libs.led_light import *
 from libs.distance_hcsr04 import *
 # from concurrent.futures import ThreadPoolExecutor
 # from .libs.VL53L0X import VL53L0X
-# from .libs.temp_amg8833 import AMG8833_8x8
 import param
-from libs.correct_temp import *
+from libs.correct_temp import gaussian_filter, get_facegrids_degC, calc_offset, estimate_env_temp_degC, estimate_body_temp_degC
 
 #i2cの設定
 i2c_bus = busio.I2C(board.SCL, board.SDA)
@@ -210,9 +209,9 @@ class MyDevice(object):
 
                     #距離によるオフセットの算出
                     if self.min_dis_cm <= distance_cm <=  self.max_dis_cm:
-                        temp_offset_degC = calc_offset_by_distance(distance_cm, self.correct_slope, self.correct_intercept)
+                        temp_offset_degC = calc_offset(distance_cm, self.correct_slope, self.correct_intercept)
                     else:
-                        temp_offset_degC = calc_offset_by_distance(25, self.correct_slope, self.correct_intercept)
+                        temp_offset_degC = calc_offset(25, self.correct_slope, self.correct_intercept)
                     logger.info('[DATA]Offset:', temp_offset_degC, '[℃]')
 
                     #取得値補正
