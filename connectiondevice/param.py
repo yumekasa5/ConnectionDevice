@@ -31,5 +31,14 @@ ALART_BODY_TEMP_DEGC = 37.5
 MIN_BODY_TEMP_DEGC = 35.0
 
 #Correct temparature coeficient
-SLOPE = 0.0671
-INTERCEPT = 7.82
+DIS_SLOPE = 0.0671
+DIS_INTERCEPT = 7.82
+ENV_SLOPE = 0.0
+ENV_INTERCEPT = 0.0
+
+#Position of no used grids for estimating environment temperature
+NO_USED_GRIDS_POS = [[2, 0], [2, 1],
+                     [3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5],
+                     [4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5],
+                     [5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5],
+                     [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],]
